@@ -8,6 +8,7 @@ import com.javacapability.transactional.service.BookingService;
 import com.javacapability.transactional.service.BookingServiceImpl;
 import com.javacapability.transactional.service.PassengerDetailsService;
 import com.javacapability.transactional.service.RailBankService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +32,14 @@ public class BookingController {
         return ResponseEntity.ok("Data inserted");
     }
 
-    @PostMapping("/booking-transactional")
-    public ResponseEntity<String> createBookingTransactional(@RequestBody PassengerBookingDTO bookingRequest) {
-        bookingService.addBookingTransactional(bookingRequest);
+    @PostMapping("/booking/{type}")
+    public ResponseEntity<String> createBookingTransactional(
+            @PathVariable("type") String transactionType, @RequestBody PassengerBookingDTO bookingRequest) {
+        if (StringUtils.equals(transactionType, "programmatic")) {
+            bookingService.addBookingProgrammaticTransactional(bookingRequest);
+        } else {
+            bookingService.addBookingDeclarativeTransactional(bookingRequest);
+        }
         return ResponseEntity.ok("Data inserted");
     }
 

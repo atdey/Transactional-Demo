@@ -12,7 +12,10 @@ import com.javacapability.transactional.repository.RailwayBankRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Optional;
 
@@ -31,6 +34,9 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private PaymentService paymentService;
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     @Override
     public void addBooking(PassengerBookingDTO passengerBookingDTO) {
         add(passengerBookingDTO);
@@ -38,8 +44,22 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional
     @Override
-    public void addBookingTransactional(PassengerBookingDTO passengerBookingDTO) {
+    public void addBookingDeclarativeTransactional(PassengerBookingDTO passengerBookingDTO) {
         add(passengerBookingDTO);
+    }
+
+    @Override
+    public void addBookingProgrammaticTransactional(PassengerBookingDTO passengerBookingDTO) {
+        this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+                    add(passengerBookingDTO);
+                } catch(RuntimeException ex) {
+                    status.setRollbackOnly();
+                    throw new RuntimeException(ex.getMessage());
+                }
+            }
+        });
     }
 
     private void add(PassengerBookingDTO passengerBookingDTO) {

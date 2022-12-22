@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @OpenAPIDefinition(info = @Info(
-        title = "Caching Example",
+        title = "Transactional Example",
         version = "0.0.1-SNAPSHOT",
-        description = "Project to demonstrate the Caching in a Spring-boot Application")
+        description = "Project to demonstrate the Transactional in a Spring-boot Application")
 )
 public class OpenApiConfig {
 }

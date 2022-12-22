@@ -23,7 +23,7 @@ public class PaymentService {
     }
 
     public boolean validatePassengerBankServer() {
-        if (!isBankServerRunning) {
+        if (!isPassengerServerRunning) {
             throw new RuntimeException("Passenger's bank server is down");
         }
 
